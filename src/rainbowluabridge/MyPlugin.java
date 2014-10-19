@@ -56,7 +56,7 @@ public class MyPlugin extends PluginBase{
 	{
             for(int i=0; i<plugins.size();i++){
                     plg = (LuaPlugin)plugins.get(i);  
-                    plg.OnConsoleInput(cmd, ei);
+                    plg.OnConsoleInput(cmd,  ei);
             } 
 	}
     /*
@@ -65,7 +65,7 @@ public class MyPlugin extends PluginBase{
     public void onAttemptArmorStandInteract(MC_Player plr, MC_Entity entStand, MC_ArmorStandActionType actionType, MC_EventInfo ei){
         for(int i=0; i<plugins.size();i++){
                     plg = (LuaPlugin)plugins.get(i);  
-                    plg.onAttemptArmorStandInteract(plr, entStand, actionType, ei);
+                    plg.onAttemptArmorStandInteract(plr, entStand, actionType,  ei);
             } 
     }
     /*
@@ -150,7 +150,7 @@ public class MyPlugin extends PluginBase{
     public void	onAttemptExplosion(MC_Location loc, MC_EventInfo ei){
         for(int i=0; i<plugins.size();i++){
                     plg = (LuaPlugin)plugins.get(i);  
-                    plg.onAttemptExplosion(loc, ei);
+                    plg.onAttemptExplosion(loc,  ei);
             } 
     }
     //Called when an explosion occurs but not for individual blocks.

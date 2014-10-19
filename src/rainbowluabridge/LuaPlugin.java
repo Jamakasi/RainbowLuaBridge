@@ -8,7 +8,7 @@ import org.keplerproject.luajava.LuaObject;
 import org.keplerproject.luajava.LuaState;
 import org.keplerproject.luajava.LuaStateFactory;
 
-/**
+/*
  * @author Jamakasi
  */
 
@@ -35,7 +35,7 @@ public class LuaPlugin{
         Lstate = LuaStateFactory.newLuaState();
         Lstate.openLibs();
         int err =Lstate.LdoFile(luaFileName);
-        isLuaErr(err);
+        isLuaErr(err, Lstate);
         //if(!isLuaErr(err)){
                 //pluginName = luaGetFuncAsString("getPluginName");
                 //pluginDescription = luaGetFuncAsString("getPluginDescription");
@@ -66,29 +66,29 @@ public class LuaPlugin{
     private void log(String message){
         System.out.println(MyPlugin.logPrefix+message);
     }
-    private boolean isLuaErr(int err){
+    private boolean isLuaErr(int err, LuaState ls){
         if(err != 0 || this.isDebug())
         {
           switch (err)
           {
             case 1 :{
-              log(pluginName+ "Runtime error. " + Lstate.toString(-1));
+              log(pluginName+ "Runtime error. " + ls.toString(-1));
               return true;}
 
             case 2 :{
-              log(pluginName+" File not found. " + Lstate.toString(-1));
+              log(pluginName+" File not found or error in lua function: " + ls.toString(-1));
               return true;}
 
             case 3 :{
-              log(pluginName+" Syntax error. " + Lstate.toString(-1));
+              log(pluginName+" Syntax error. " + ls.toString(-1));
               return true;}
 
             case 4 :{
-              log(pluginName+" Memory error. " + Lstate.toString(-1));
+              log(pluginName+" Memory error. " + ls.toString(-1));
               return true;}
 
             default :{
-              log(pluginName+" Error. " + Lstate.toString(-1));
+              log(pluginName+" Error. " + ls.toString(-1));
               return true;}
           }
         }
@@ -98,7 +98,7 @@ public class LuaPlugin{
         Lstate.getGlobal(funcName);
         int error = Lstate.pcall(0, 1, 0); //0 =все ништяк
         LuaObject lret = Lstate.getLuaObject(1);
-            isLuaErr(error);
+            //isLuaErr(error);
         Lstate.pop(1);
         return lret.getString();
     }
@@ -179,6 +179,7 @@ public class LuaPlugin{
    /* private void luaGetFuncVoidEvent(String funcName,String cmd, MC_EventInfo ei){
         Lstate.getGlobal(funcName);
         Lstate.pushJavaObject(cmd);
+        
         Lstate.pushJavaObject(ei);
         int error = Lstate.pcall(2, 0, 0); //0 =все ништяк
             luaErr(error);
@@ -194,8 +195,9 @@ public class LuaPlugin{
             Lstate.pushJavaObject(cmd);
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(2, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate);
             Lstate.pop(1);
-            isLuaErr(error);
+            
         }
         
     }
@@ -208,10 +210,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(entStand);
             Lstate.pushJavaObject(actionType);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate);
             Lstate.pop(1);
-            isLuaErr(error);
         }    
     }
     /*
@@ -222,10 +225,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptAttackEntity");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(ent);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate);
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     /*
@@ -236,10 +240,12 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptBlockBreak");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(loc);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
+            
         }
     }
     /*
@@ -250,10 +256,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptBlockFlow");
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(blk);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     /*
@@ -264,10 +271,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptBookChange");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(bookContent);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     /*
@@ -278,10 +286,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptCropTrample");
             Lstate.pushJavaObject(ent);
             Lstate.pushJavaObject(loc);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     
@@ -291,10 +300,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(entType);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player attempts to damage a Painting or Item Frame
@@ -304,10 +314,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(ent);
             Lstate.pushJavaObject(dmgType);
             Lstate.pushJavaObject(amt);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when an entity is about to take damage.
@@ -316,10 +327,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptEntityInteract");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(ent);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player interacts with an entity
@@ -327,10 +339,11 @@ public class LuaPlugin{
         if(eventAvailable("onAttemptEntitySpawn")){
             Lstate.getGlobal("onAttemptEntitySpawn");
             Lstate.pushJavaObject(ent);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(2, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when an entity is about to spawn.
@@ -343,10 +356,11 @@ public class LuaPlugin{
         if(eventAvailable("onAttemptExplosion")){
             Lstate.getGlobal("onAttemptExplosion");
             Lstate.pushJavaObject(loc);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(2, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when an explosion occurs but not for individual blocks.
@@ -356,10 +370,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(is);
             Lstate.pushJavaObject(isMinecartHopper);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a hopper is about to receive an item.
@@ -368,10 +383,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptItemDrop");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(is);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player attempts to drop an item
@@ -381,10 +397,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(actionType);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player attempts to interact with an Item Frame
@@ -394,10 +411,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(is);
             Lstate.pushJavaObject(isXpOrb);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player attempts to pickup an item
@@ -406,10 +424,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptItemUse");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(is);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player attempts to use an item, even into the air or not a valid item use.
@@ -418,10 +437,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptPistonAction");
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(dir);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a piston fires
@@ -430,11 +450,12 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptPlaceOrInteract");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(loc);
+            
             Lstate.pushJavaObject(ei);
             Lstate.pushJavaObject(dir);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player attempts to either place or interact with a block
@@ -443,10 +464,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptPlayerChangeDimension");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(newDimension);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player changes dimension (Nether, TheEnd, etc)
@@ -456,10 +478,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(locFrom);
             Lstate.pushJavaObject(locTo);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player moves.
@@ -468,10 +491,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptPlayerTeleport");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(loc);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player teleport is occurring.
@@ -480,10 +504,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onAttemptPotionEffect");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(potionType);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player is receiving a potion effect (from potion or beacon etc).
@@ -494,8 +519,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(blockKey);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called after a block was broken.
@@ -505,8 +530,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(containerType);
             int error = Lstate.pcall(2, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when any container closes, even player inventory
@@ -517,8 +542,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(items);
             Lstate.pushJavaObject(internalClassName);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when most containers is opened.
@@ -530,8 +555,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(isWaterLanding);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player lands from a fall or jump.
@@ -542,8 +567,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(z);
             Lstate.pushJavaObject(data);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a new column of terrain needs generating in default world.
@@ -554,8 +579,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(isHandItem);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called after an Interact (right-click) on something happened.
@@ -568,8 +593,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(locPlacedAgainst);
             Lstate.pushJavaObject(dir);
             int error = Lstate.pcall(5, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called after an item is placed.
@@ -580,8 +605,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(entKiller);
             Lstate.pushJavaObject(dmgType);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a non-player entity dies
@@ -591,10 +616,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(soundName);
             Lstate.pushJavaObject(loc);
+             
              Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player is about to receive a sound effect from server.
@@ -606,8 +632,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(dmgType);
              Lstate.pushJavaObject(deathMsg);
             int error = Lstate.pcall(4, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called after a player death
@@ -616,10 +642,11 @@ public class LuaPlugin{
             Lstate.getGlobal("onPlayerInput");
             Lstate.pushJavaObject(plr);
             Lstate.pushJavaObject(msg);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called for all player input.
@@ -628,8 +655,8 @@ public class LuaPlugin{
             Lstate.getGlobal("onPlayerJoin");
             Lstate.pushJavaObject(plr);
             int error = Lstate.pcall(1, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called after a player is joined and is able to interact and receive messages
@@ -640,8 +667,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(uuid);
             Lstate.pushJavaObject(ip);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player logs in.
@@ -651,8 +678,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(playerName);
             Lstate.pushJavaObject(uuid);
             int error = Lstate.pcall(2, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player logs out
@@ -661,8 +688,8 @@ public class LuaPlugin{
             Lstate.getGlobal("onPlayerRespawn");
             Lstate.pushJavaObject(plr);
             int error = Lstate.pcall(1, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a player respawns after death
@@ -678,8 +705,8 @@ public class LuaPlugin{
             Lstate.pushJavaObject(sign);
             Lstate.pushJavaObject(loc);
             int error = Lstate.pcall(3, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called after a sign update occurs
@@ -690,10 +717,11 @@ public class LuaPlugin{
             Lstate.pushJavaObject(sign);
             Lstate.pushJavaObject(loc);
             Lstate.pushJavaObject(newLines);
+            
             Lstate.pushJavaObject(ei);
             int error = Lstate.pcall(5, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called when a plugin is loaded.
@@ -702,8 +730,8 @@ public class LuaPlugin{
             Lstate.getGlobal("onTick");
             Lstate.pushJavaObject(tickNumber);
             int error = Lstate.pcall(1, 0, 0); //0 =все ништяк
+            isLuaErr(error, Lstate); 
             Lstate.pop(1);
-            isLuaErr(error);
         }
     }
     //Called every tick (1/20th of a second).

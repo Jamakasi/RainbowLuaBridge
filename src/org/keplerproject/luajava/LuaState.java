@@ -35,7 +35,7 @@ import java.io.File;
  */
 public class LuaState
 {
-  private final static String LUAJAVA_LIB = "luajava-1.1";
+  //private final static String LUAJAVA_LIB = "luajava-1.1";
 
   final public static Integer LUA_GLOBALSINDEX  = new Integer(-10002);
   final public static Integer LUA_REGISTRYINDEX = new Integer(-10000);
@@ -107,9 +107,14 @@ public class LuaState
           }
       }else if(OS.toLowerCase().contains("nix")){
           if(ARCH.toLowerCase().contains("x86")){
-              System.load(LIBPATH+"luajava-1.1.so");
+              //not tested
+              if( (new File(LIBPATH+"libluajava.so").exists()) ){
+                  System.load(LIBPATH+"libluajava.so");
+              }else  System.err.println("LuaJava native lib for OS:"+OS+":OS_ARCH"+ARCH+" not found in: "+LIBPATH+"libluajava.so");
           }else{
-              System.load(LIBPATH+"luajava-1.1-x64.so");
+              if( (new File(LIBPATH+"libluajava.so").exists()) ){
+                  System.load(LIBPATH+"libluajava.so");
+              }else  System.err.println("LuaJava native lib for OS:"+OS+":OS_ARCH"+ARCH+" not found in: "+LIBPATH+"libluajava.so");
           }
       }
     //System.load(LUAJAVA_LIB);
