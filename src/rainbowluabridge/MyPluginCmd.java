@@ -86,12 +86,12 @@ public class MyPluginCmd implements MC_Command
         private void luaPluginReload(MC_Player plr,String pluginName){
             
         }
-        private void luaPluginsList(MC_Player plr){
+        /*private void luaPluginsList(MC_Player plr){
             String[] list = MyPlugin.lps.getPluginsList();
                         for(String lplist: list){
                             plr.sendMessage(MyPlugin.logPrefix+lplist);
                         }
-        }
+        }*/
         private void luaPluginInfo(MC_Player plr,String pluginName){
             
         }

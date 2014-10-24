@@ -14,14 +14,15 @@ import org.keplerproject.luajava.LuaStateFactory;
 
 
 public class LuaPlugin{
-    private final LuaState Lstate;
+    private LuaState Lstate;
     
     private final String pluginName;
     private final String pluginDescription;
     private final String[] pluginEvents;
+    //private final String luaFile;
     private final String luaFile;
-    private final String pathToLuaFile;
     private boolean debug = false;
+    private boolean isDisable = false;
     
     public void setDebug(boolean status){
         this.debug = status;
@@ -30,8 +31,8 @@ public class LuaPlugin{
         return this.debug;
     }
     LuaPlugin(final String luaFileName){
-        luaFile = luaFileName.substring(luaFileName.lastIndexOf(File.separator), luaFileName.length());
-        pathToLuaFile = luaFileName;
+        //luaFile = luaFileName.substring(luaFileName.lastIndexOf(File.separator), luaFileName.length());
+        luaFile = luaFileName;
         Lstate = LuaStateFactory.newLuaState();
         Lstate.openLibs();
         int err =Lstate.LdoFile(luaFileName);
@@ -49,12 +50,18 @@ public class LuaPlugin{
 
     public void closeScript(){
         log(MyPlugin.logPrefix+"unloaded plugin: "+pluginName);
+        this.isDisable =true;
         Lstate.close();
     }
-    /*public void reloadScript(){
+    public void reloadScript(){
         closeScript();
-        init(pathToLuaFile);
-    }*/
+        Lstate = LuaStateFactory.newLuaState();
+        Lstate.openLibs();
+        int err =Lstate.LdoFile(luaFile);
+        isLuaErr(err, Lstate);
+                log("reloaded plugin: "+pluginName);
+                this.isDisable=false;
+    }
     public String getPluginName(){
         return pluginName;
     }
@@ -114,65 +121,13 @@ public class LuaPlugin{
         return Lstate.getLuaObject(varible).getBoolean();
     }
     private boolean eventAvailable(String eventName){
+        if(this.isDisable) return false;
         for (String ev : pluginEvents) 
         {  
             //log("checkEvent: "+ev);
             if(ev.equalsIgnoreCase(eventName)){
                 return true;
             }else return false;
-            /*switch (ev.toLowerCase()){
-                     case"onAttemptArmorStandInteract":{return true;}
-                     case"onAttemptAttackEntity":{return true;}
-                     case"onAttemptBlockBreak":{return true;}
-                     case"onAttemptBlockFlow":{return true;}
-                     case"onAttemptBlockPlace":{return true;}
-                     case"onAttemptBookChange":{return true;}
-                     case"onAttemptCropTrample":{return true;}
-                     case"onAttemptDamageHangingEntity":{return true;}
-                     case"onAttemptEntityDamage":{return true;}
-                     case"onAttemptEntityInteract":{return true;}
-                     case"onAttemptEntitySpawn":{return true;}
-                     case"onAttemptExplodeSpecific":{return true;}
-                     case"onAttemptExplosion":{return true;}
-                     case"onAttemptHopperReceivingItem":{return true;}
-                     case"onAttemptItemDrop":{return true;}
-                     case"onAttemptItemFrameInteract":{return true;}
-                     case"onAttemptItemPickup":{return true;}
-                     case"onAttemptItemUse":{return true;}
-                     case"onAttemptPistonAction":{return true;}
-                     case"onAttemptPlaceOrInteract":{return true;}
-                     case"onAttemptPlayerChangeDimension":{return true;}
-                     case"onAttemptPlayerMove":{return true;}
-                     case"onAttemptPlayerTeleport":{return true;}
-                     case"onAttemptPotionEffect":{return true;}
-                     case"onBlockBroke":{return true;}
-                     case"onConsoleInput":{log("checkEvent: "+ev);return true;}
-                     case"onContainerClosed":{return true;}
-                     case"onContainerOpen":{return true;}
-                     case"onFallComplete":{return true;}
-                     case"onGenerateWorldColumn":{return true;}
-                     case"onInteracted":{return true;}
-                     case"onItemCrafted":{return true;}
-                     case"onItemPlaced":{return true;}
-                     case"onNonPlayerEntityDeath":{return true;}
-                     case"onPacketSoundEffect":{return true;}
-                     case"onPlayerBedEnter":{return true;}
-                     case"onPlayerBedLeave":{return true;}
-                     case"onPlayerDeath":{return true;}
-                     case"onPlayerInput":{return true;}
-                     case"onPlayerJoin":{return true;}
-                     case"onPlayerLogin":{return true;}
-                     case"onPlayerLogout":{return true;}
-                     case"onPlayerRespawn":{return true;}
-                     case"onRequestPermission":{return true;}
-                     case"onServerFullyLoaded":{return true;}
-                     case"onShutdown":{return true;}
-                     case"onSignChanged":{return true;}
-                     case"onSignChanging":{return true;}
-                     case"onStartup":{return true;}
-                     case"onTick":{return true;}
-                     default:{log("checkEvent: "+ev);return false;}
-            }*/
         }
         return false;
     }

@@ -54,10 +54,56 @@ public class MyPlugin extends PluginBase{
     */
     public void onConsoleInput(String cmd, MC_EventInfo ei) 
 	{
-            for(int i=0; i<plugins.size();i++){
-                    plg = (LuaPlugin)plugins.get(i);  
-                    plg.OnConsoleInput(cmd,  ei);
-            } 
+            if(ei.isCancelled) return;
+            String[] cmdList = cmd.toLowerCase().split(" ");
+            if(cmdList[0].equalsIgnoreCase("lua")){
+                ei.isCancelled = true;
+                if(cmdList.length>1){
+                    switch(cmdList[1]){
+                            case "reload":{
+                                    if(cmdList.length==3){
+                                        lps.reloadPlugin(cmdList[2]);
+                                    }else{
+                                        lps.reloadPlugins();
+                                    }
+                                    break;
+                                }
+                            case "info":{
+                                    if(cmdList.length==3){
+                                        String dskr = lps.getPluginDescription(cmdList[2]);
+                                        if(!dskr.equalsIgnoreCase("error")){
+                                            System.out.println(dskr);
+                                        }else System.out.println("plugin not found");
+                                    }else{
+                                        System.out.println("lua info pluginName - about plugin");
+                                    }
+                                    break;
+                                }
+                            case "list":{
+                                    for (String plugin:lps.getPluginsNamesList()){
+                                        System.out.println(plugin);
+                                    }
+                                break;
+                                }
+                            case "help":{
+                                System.out.println("lua help - this help\nlua info pluginName - about plugin\nlua list - list all loaded lua plugins\nlua reload pluginName - reload lua pluginName");
+                                break;
+                                }
+                            default:{
+                                System.out.println("bad command. Type lua help");
+                                break;
+                                }
+                        }
+                }else{
+                    System.out.println("rainbow lua bridge plugin. Try lua help");
+                }    
+            }else{
+                //Send to lua plugins
+                    for(int i=0; i<plugins.size();i++){
+                            plg = (LuaPlugin)plugins.get(i);  
+                            plg.OnConsoleInput(cmd,  ei);
+                    } 
+            }
 	}
     /*
     * Called when a player interacts with an Armor Stand

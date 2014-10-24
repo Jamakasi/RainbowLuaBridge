@@ -53,7 +53,7 @@ public class LuaPluginSearch {
                     return plg;
         }return null;
     }
-    public String[] getPluginsList(){
+    public String[] getPluginsNamesList(){
         String[] list = new String[plugin.size()];
         LuaPlugin plg;
         for(int i=0; i<plugin.size();i++){
@@ -62,11 +62,39 @@ public class LuaPluginSearch {
 
         }return list;
     }
+    public String getPluginDescription(String pluginName){
+        String[] list = new String[plugin.size()];
+        LuaPlugin plg;
+        for(int i=0; i<plugin.size();i++){
+                plg = (LuaPlugin)plugin.get(i);
+                if(plg.getPluginName().equalsIgnoreCase(pluginName)){
+                    return plg.getPluginDescription();
+                }  
+
+        }return "error";
+    }
     public void shutdownPlugins(){
         LuaPlugin plg;
             for(int i=0; i<plugin.size();i++){
                     plg = (LuaPlugin)plugin.get(i);  
                     plg.closeScript();
+            } 
+   }
+    public void reloadPlugins(){
+        LuaPlugin plg;
+            for(int i=0; i<plugin.size();i++){
+                    plg = (LuaPlugin)plugin.get(i);  
+                    plg.reloadScript();
+            } 
+   }
+    public void reloadPlugin(String pluginName){
+        LuaPlugin plg;
+            for(int i=0; i<plugin.size();i++){
+                    plg = (LuaPlugin)plugin.get(i);  
+                    if(plg.getPluginName().equalsIgnoreCase(pluginName)){
+                        plg.reloadScript();
+                        return;
+                    }
             } 
    }
 }
